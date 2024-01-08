@@ -22,6 +22,14 @@ SmartFlow's core objective is to minimize traffic congestion and enhance traffic
 - **Dynamic Signal Control:** Adapts signal timings in real time based on traffic conditions.
 - **Efficiency Improvement:** Aims to reduce congestion, waiting times, and overall travel durations.
 
+## Reinforcement Learning with DQN and Target Network
+
+SmartFlow implements Reinforcement Learning (RL) using Deep Q-Networks (DQN) to optimize traffic signal control. The DQN architecture enables the model to learn optimal traffic signal strategies through interactions with the simulated traffic environment. The model learns to make decisions (altering signal phases) by maximizing cumulative rewards, such as minimizing waiting times or queue lengths at intersections.
+
+To stabilize training, SmartFlow employs a DQN with a target network. This approach utilizes a separate target network that updates at intervals to provide more stable and reliable Q-value estimations during training. The target network serves as a reference, decoupled from the primary network used in action selection, aiding in more consistent and efficient learning.
+
+The reinforcement learning paradigm, along with the integration of DQN and target networks, allows SmartFlow's models to iteratively improve their traffic signal control strategies over successive episodes, progressively enhancing their decision-making abilities to better manage traffic flow.
+
 ## Federated Learning
 
 SmartFlow employs a federated learning approach to train its models across multiple Raspberry Pis, enabling decentralized training without the need for centralizing data. Each Pi contributes to model training using local data generated from its own simulated traffic scenarios. This approach enhances scalability, privacy, and efficiency by avoiding data transfer and ensuring localized model updates.
