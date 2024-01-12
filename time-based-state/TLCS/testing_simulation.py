@@ -3,6 +3,8 @@ import numpy as np
 import random
 import timeit
 import os
+import shap
+import matplotlib.pyplot as plt
 
 # phase codes based on environment.net.xml
 PHASE_NS_GREEN = 0  # action 0 code 00
@@ -36,6 +38,14 @@ class Simulation:
         """
         start_time = timeit.default_timer()
 
+        # Initialize SHAP explainer
+        explainer = shap.DeepExplainer(self._Model._model, np.zeros((1, self._num_states)))
+
+        # Create a figure for dynamic plotting
+        plt.ion()  # Turn on interactive mode
+        fig, ax = plt.subplots()
+
+
         # first, generate the route file for this simulation and set up sumo
         self._TrafficGen.generate_routefile(seed=episode)
         traci.start(self._sumo_cmd)
@@ -60,6 +70,22 @@ class Simulation:
             # choose the light phase to activate, based on the current state of the intersection
             action = self._choose_action(current_state)
 
+
+            # Explain the DQN's decision using SHAP
+            shap_values = explainer.shap_values(np.array([current_state]))
+            feature_importance = shap_values[0]
+
+            # Print or use the feature_importance as needed for explanation
+            print("SHAP Values:", feature_importance)
+
+            # Plot SHAP values
+            ax.clear()  # Clear previous plot
+            ax.bar(range(len(feature_importance.flatten())), feature_importance.flatten())
+            ax.set_title('SHAP Values')
+            ax.set_xlabel('Feature Index')
+            ax.set_ylabel('SHAP Value')
+            plt.pause(0.1) 
+
             # if the chosen phase is different from the last phase, activate the yellow phase
             if self._step != 0 and old_action != action:
                 self._set_yellow_phase(old_action)
@@ -78,7 +104,8 @@ class Simulation:
         #print("Total reward:", np.sum(self._reward_episode))
         traci.close()
         simulation_time = round(timeit.default_timer() - start_time, 1)
-
+        plt.ioff()  # Turn off interactive mode when the simulation is done
+        plt.show()  # Display the final plot (optional)
         return simulation_time
 
 
