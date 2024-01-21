@@ -4,8 +4,8 @@ from __future__ import print_function
 import os
 from shutil import copyfile
 
-# from testing_simulation import Simulation
-from testing_simulation_server import Simulation
+from testing_simulation import Simulation
+# from testing_simulation_server import Simulation
 from generator import TrafficGenerator
 from model import TestModel
 from visualization import Visualization
