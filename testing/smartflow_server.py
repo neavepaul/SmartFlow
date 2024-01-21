@@ -5,6 +5,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # kill warning about tensorflow
 import tensorflow as tf
 from tensorflow.keras.models import load_model
+import json
 
 # Raspberry Pi's IP address
 PI_IP = '192.168.137.128' #hotspot
@@ -12,6 +13,24 @@ PI_IP = '192.168.137.128' #hotspot
 PI_PORT = 12345
 
 loaded_model = load_model('traffic_model.h5')
+
+stored_value = {'NS_GREEN': 0, 'NS_YELLOW': 0, 'NSL_GREEN': 0, 'NSL_YELLOW': 0,
+                'EW_GREEN': 0, 'EW_YELLOW': 0, 'EWL_GREEN': 0, 'EWL_YELLOW': 0, 'KILL': 0}
+
+
+CLASS_TO_PHASE = {
+    0: "NS_GREEN",
+    1: "NSL_GREEN",
+    2: "EW_GREEN",
+    3: "EWL_GREEN"
+}
+
+# Write to JSON file
+STATE_FILE = 'state.json'
+def write_state(state):
+    with open(STATE_FILE, 'w') as file:
+        json.dump(state, file)
+
 
 def choose_action(state):
     """
@@ -40,12 +59,29 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as pi_socket:
 
                 state = pickle.loads(received_data)
 
+                # Turn off the current green phases and turn on the corresponding red phases
+                for key in stored_value.keys():
+                    if key.endswith('_GREEN'):
+                        stored_value[key] = 0
+                        corresponding_red_key = key.replace('_GREEN', '_RED')
+                        stored_value[corresponding_red_key] = 1
+
+
                 # Perform prediction (replace this with your model prediction logic)
                 action = choose_action(state)
 
-                # Serialize and send the result back to PC
-                serialized_result = pickle.dumps(action)
-                connection.sendall(serialized_result)
+
+                # Update the corresponding phases based on the model's prediction
+                phases_to_turn_green = CLASS_TO_PHASE.get(action)
+                for phase in phases_to_turn_green:
+                    stored_value[phase] = 1
+
+
+                # serialized_result = pickle.dumps(action)
+                            
+                write_state(stored_value)
+                response= "recvd array"
+                connection.sendall(response)
 
                 print(f"Action {action} sent")
 

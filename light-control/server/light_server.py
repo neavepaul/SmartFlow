@@ -47,15 +47,7 @@ def data_transfer(conn):
         if len(full_msg) - HEADERSIZE == msglen:
             commander = pickle.loads(full_msg[HEADERSIZE:])
 
-            if type(commander) is dict:
-                stored_value.update(commander)
-                print("new stored values")
-                print(stored_value)
-
-                reply = "Values updated in server storage"
-                conn.sendall(str.encode(reply))
-                continue
-            elif commander == "UPDATE":
+            if commander == "UPDATE":
                 reply = UPDATE()
             elif commander == 'KILL':
                 print("Shutting down SmartFlow Server")

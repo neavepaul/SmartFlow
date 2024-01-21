@@ -1,14 +1,10 @@
 from gpiozero import TrafficLights
 from time import sleep
 
-lights_NS = TrafficLights(25, 8, 7)
-lights_NSL = TrafficLights(14, 15, 18)
-
-lights_EW = TrafficLights(25, 8, 7)
-lights_EWL = TrafficLights(14, 15, 18)
-
 
 ############ NS ROADS ##############
+lights_NS = TrafficLights(25, 8, 7)
+lights_NSL = TrafficLights(14, 15, 18)
 
 def ns_green_on():
     sleep(4)
@@ -37,6 +33,9 @@ def nsl_red_on():
 ####################################
     
 ############ EW ROADS ##############
+lights_EW = TrafficLights(25, 8, 7)
+lights_EWL = TrafficLights(14, 15, 18)
+
 
 def ew_green_on():
     sleep(4)
