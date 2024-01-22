@@ -9,7 +9,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # kill warning about tensorflow
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 
-
+# For remote GPIO
 factory_NS = PiGPIOFactory(host='192.168.29.56')
 factory_SN = PiGPIOFactory(host='192.168.29.20')
 factory_EW = PiGPIOFactory(host='192.168.29.109')
@@ -25,6 +25,7 @@ lightsEWL = TrafficLights(25, 8, 7, pin_factory=factory_EW)  # RYG
 lightsWE = TrafficLights(25, 8, 7, pin_factory=factory_WE)  # RYG
 lightsWEL = TrafficLights(25, 8, 7, pin_factory=factory_WE)  # RYG
 
+# Phases
 NS_GREEN = [lightsNS, lightsSN]
 NS_YELLOW = [lightsNS, lightsSN]
 NSL_GREEN = [lightsNSL, lightsSNL]
@@ -38,6 +39,7 @@ EWL_YELLOW = [lightsEWL, lightsWEL]
 PI_IP = '192.168.29.155'
 PI_PORT = 12345
 
+# Mapping
 CLASS_TO_PHASE = {
     0: "NS_GREEN",
     1: "NSL_GREEN",
