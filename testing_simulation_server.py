@@ -18,14 +18,14 @@ PHASE_EW_YELLOW = 5
 PHASE_EWL_GREEN = 6  # action 3 code 11
 PHASE_EWL_YELLOW = 7
 
-PI_IP = '192.168.137.128' #hotspot
-PI_IP = '192.168.43.76' #phone
+# PI_IP = '192.168.137.128' #hotspot
+# PI_IP = '192.168.43.76' #phone
+PI_IP = '192.168.29.155'
 PI_PORT=12345
 
 
 class Simulation:
-    def __init__(self, Model, TrafficGen, sumo_cmd, max_steps, green_duration, yellow_duration, num_states, num_actions):
-        self._Model = Model
+    def __init__(self, TrafficGen, sumo_cmd, max_steps, green_duration, yellow_duration, num_states, num_actions):
         self._TrafficGen = TrafficGen
         self._step = 0
         self._sumo_cmd = sumo_cmd
@@ -44,14 +44,6 @@ class Simulation:
         """
         start_time = timeit.default_timer()
 
-        # Initialize SHAP explainer
-        explainer = shap.DeepExplainer(self._Model._model, np.zeros((1, self._num_states)))
-
-        # Create a figure for dynamic plotting
-        plt.ion()  # Turn on interactive mode
-        fig, ax = plt.subplots()
-
-
         # first, generate the route file for this simulation and set up sumo
         self._TrafficGen.generate_routefile(seed=episode)
         traci.start(self._sumo_cmd)
@@ -62,6 +54,7 @@ class Simulation:
         self._waiting_times = {}
         old_total_wait = 0
         old_action = -1 # dummy init
+
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as pc_socket:
             pc_socket.connect((PI_IP, PI_PORT))
             while self._step < self._max_steps:
@@ -92,25 +85,6 @@ class Simulation:
                     print("Received result:", action)
                 except Exception as e:
                     print(f"ERROR: {e}")
-
-                # choose the light phase to activate, based on the current state of the intersection
-                # action = self._choose_action(current_state)
-
-
-                # Explain the DQN's decision using SHAP
-                shap_values = explainer.shap_values(np.array([current_state]))
-                feature_importance = shap_values[0]
-
-                # Print or use the feature_importance
-                # print("SHAP Values:", feature_importance)
-
-                # Plot SHAP values
-                ax.clear()  # Clear previous plot
-                ax.bar(range(len(feature_importance.flatten())), feature_importance.flatten())
-                ax.set_title('SHAP Values')
-                ax.set_xlabel('Feature Index')
-                ax.set_ylabel('SHAP Value')
-                plt.pause(0.1) 
 
                 # if the chosen phase is different from the last phase, activate the yellow phase
                 if self._step != 0 and old_action != action:
