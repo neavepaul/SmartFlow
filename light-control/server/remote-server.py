@@ -12,27 +12,27 @@ from tensorflow.keras.models import load_model
 
 factory_NS = PiGPIOFactory(host='192.168.29.56')
 factory_SN = PiGPIOFactory(host='192.168.29.20')
-# factory_EW = PiGPIOFactory(host='192.168.29.109')
-# factory_WE = PiGPIOFactory(host='192.168.29.215')
+factory_EW = PiGPIOFactory(host='192.168.29.109')
+factory_WE = PiGPIOFactory(host='192.168.29.215')
 
 # Every traffic signal will have this definition
 lightsNS = TrafficLights(25, 8, 7, pin_factory=factory_NS)  # RYG
 lightsNSL = TrafficLights(16, 20, 21, pin_factory=factory_NS)  # RYG
 lightsSN = TrafficLights(25, 8, 7, pin_factory=factory_SN)  # RYG
 lightsSNL = TrafficLights(16, 20, 21, pin_factory=factory_SN)  # RYG
-# lightsEW = TrafficLights(25, 8, 7, pin_factory=factory_EW)  # RYG
-# lightsEWL = TrafficLights(16, 20, 21, pin_factory=factory_EW)  # RYG
-# lightsWE = TrafficLights(25, 8, 7, pin_factory=factory_WE)  # RYG
-# lightsWEL = TrafficLights(16, 20, 21, pin_factory=factory_WE)  # RYG
+lightsEW = TrafficLights(25, 8, 7, pin_factory=factory_EW)  # RYG
+lightsEWL = TrafficLights(16, 20, 21, pin_factory=factory_EW)  # RYG
+lightsWE = TrafficLights(25, 8, 7, pin_factory=factory_WE)  # RYG
+lightsWEL = TrafficLights(16, 20, 21, pin_factory=factory_WE)  # RYG
 
 NS_GREEN = [lightsNS, lightsSN]
 NS_YELLOW = [lightsNS, lightsSN]
 NSL_GREEN = [lightsNSL, lightsSNL]
 NSL_YELLOW = [lightsNSL, lightsSNL]
-# EW_GREEN = [lightsEW, lightsWE]
-# EW_YELLOW = [lightsEW, lightsWE]
-# EWL_GREEN = [lightsEWL, lightsWEL]
-# EWL_YELLOW = [lightsEWL, lightsWEL]
+EW_GREEN = [lightsEW, lightsWE]
+EW_YELLOW = [lightsEW, lightsWE]
+EWL_GREEN = [lightsEWL, lightsWEL]
+EWL_YELLOW = [lightsEWL, lightsWEL]
 
 # Raspberry Pi's IP address
 PI_IP = '192.168.29.155'
@@ -112,14 +112,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as pi_socket:
                         phase = CLASS_TO_PHASE[old_action]
                         old_phase = globals()[phase]
                         set_y2r(old_phase)
-                    # elif old_action == 2:
-                    #     # Turn off lights for EW_GREEN phase
-                    #     phase = CLASS_TO_PHASE[old_action]
-                    #     set_y2r(phase)
-                    # elif old_action == 3:
-                    #     # Turn off lights for EWL_GREEN phase
-                    #     phase = CLASS_TO_PHASE[old_action]
-                    #     set_y2r(phase)
+                    elif old_action == 2:
+                        # Turn off lights for EW_GREEN phase
+                        phase = CLASS_TO_PHASE[old_action]
+                        old_phase = globals()[phase]
+                        set_y2r(old_phase)
+                    elif old_action == 3:
+                        # Turn off lights for EWL_GREEN phase
+                        phase = CLASS_TO_PHASE[old_action]
+                        old_phase = globals()[phase]
+                        set_y2r(old_phase)
 
                     # Set lights for the new predicted action
                     if action == 0:
@@ -132,14 +134,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as pi_socket:
                         phase = CLASS_TO_PHASE[action]
                         new_phase = globals()[phase]
                         set_green(new_phase)
-                    # # elif action == 2:
-                    #     # Set lights for EW_GREEN phase
-                    #     phase = CLASS_TO_PHASE[action]
-                    #     set_green(phase)
-                    # elif action == 3:
-                    #     # Set lights for EWL_GREEN phase
-                    #     phase = CLASS_TO_PHASE[action]
-                    #     set_green(phase)
+                    elif action == 2:
+                        # Set lights for EW_GREEN phase
+                        phase = CLASS_TO_PHASE[action]
+                        new_phase = globals()[phase]
+                        set_green(new_phase)
+                    elif action == 3:
+                        # Set lights for EWL_GREEN phase
+                        phase = CLASS_TO_PHASE[action]
+                        new_phase = globals()[phase]
+                        set_green(new_phase)
 
                     # Update old action
                     old_action = action
