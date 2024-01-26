@@ -18,18 +18,18 @@ def calculate_time_in_frame(dot_id):
         return 0
 
 # Initialize video capture
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('green2.mp4')
 
 # Define a movement threshold (adjust as needed)
-MOVEMENT_THRESHOLD = 5  # pixels
+MOVEMENT_THRESHOLD = 5  # Pixels
 
 while True:
     ret, frame = cap.read()
 
     # Apply color-based masking to isolate the stickers
-    lower_white = np.array([200, 200, 200])
-    upper_white = np.array([255, 255, 255])
-    mask = cv2.inRange(frame, lower_white, upper_white)
+    lower_green = np.array([0, 30, 0])                     # Adjust the lower range for green color
+    upper_green = np.array([100, 255, 100])                 # Adjust the upper range for green color
+    mask = cv2.inRange(frame, lower_green, upper_green)
 
     # Bitwise-AND to keep only the white stickers
     masked_frame = cv2.bitwise_and(frame, frame, mask=mask)
