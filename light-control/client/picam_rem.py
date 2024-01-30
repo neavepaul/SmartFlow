@@ -13,6 +13,7 @@ tracker = Sort()
 
 waiting_times_left_lane = {}
 waiting_times_right_lane = {}
+last_appearance = {}
 
 width = 960
 height = 540
@@ -50,6 +51,7 @@ while True:
         x, y, w, h = cv2.boundingRect(contour)
         if w * h > 2500:  # minimum object size pixels
             detections.append([x, y, x+w, y+h])
+            last_appearance[int(d[4])] = time.time()
 
     # Update tracker
     if len(detections) > 0:
@@ -72,13 +74,22 @@ while True:
             cv2.putText(frame, f"{time_in_frame:.2f}s", (int(d[0]), int(d[1] + h + 10)),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-            # Update cumulative waiting times
+            # Update cumulative waiting times and last appearance time
             if time_in_frame == 0:
                 # Object is considered stopped, update waiting time
-                if lane_id == "left_lane":
-                    waiting_times_left_lane[object_id] = time.time()
-                else:
-                    waiting_times_right_lane[object_id] = time.time()
+                waiting_times_left_lane[object_id] = time.time() if lane_id == "left_lane" else waiting_times_left_lane.get(object_id, 0)
+                waiting_times_right_lane[object_id] = time.time() if lane_id == "right_lane" else waiting_times_right_lane.get(object_id, 0)
+                last_appearance[object_id] = time.time()
+
+    # Remove vehicles that haven't appeared for a certain time
+    current_time = time.time()
+    for object_id, last_time in list(last_appearance.items()):
+        if current_time - last_time > 2:
+            if object_id in waiting_times_left_lane:
+                del waiting_times_left_lane[object_id]
+            if object_id in waiting_times_right_lane:
+                del waiting_times_right_lane[object_id]
+            del last_appearance[object_id]
 
     # Display cumulative waiting times for left and right lanes
     current_time = time.time()
