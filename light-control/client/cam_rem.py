@@ -5,8 +5,8 @@ from sort import Sort
 import time
 
 # Define the lower and upper bounds for coloured stickers
-lower_color = np.array([35, 50, 50])
-upper_color = np.array([85, 255, 255])
+lower_color = np.array([23, 97, 28])
+upper_color = np.array([5, 255, 125])
 
 tracker = Sort()
 
