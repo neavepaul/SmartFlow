@@ -96,13 +96,13 @@ while(cap.isOpened()):
     total_left = 0
     total_right = 0
     for entry in waiting_times_left_lane.values():
-        if entry ==0:
+        if entry == 0:
             continue
-        total_left+=current_time-entry
+        total_left += current_time - entry
     for entry in waiting_times_right_lane.values():
-        if entry ==0:
+        if entry == 0:
             continue
-        total_right+=current_time-entry
+        total_right += current_time - entry
     
     cv2.putText(frame, f"L: {total_left:.2f}s",
                 (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
