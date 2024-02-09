@@ -49,7 +49,6 @@ while(cap.isOpened()):
         x, y, w, h = cv2.boundingRect(contour)
         if w * h > 2500:  # minimum object size pixels
             detections.append([x, y, x+w, y+h])
-            last_appearance[int(d[4])] = time.time()
 
     # Update tracker
     if len(detections) > 0:
@@ -60,6 +59,8 @@ while(cap.isOpened()):
         for d in trackers:
             object_id = int(d[4])
             lane_id = "left_lane" if d[0] < lane_divider_x else "right_lane"
+
+            last_appearance[object_id] = time.time() 
 
             # bounding box
             cv2.rectangle(frame, (int(d[0]), int(d[1])), (int(d[2]), int(d[3])), (0, 255, 0), 2)
@@ -91,23 +92,27 @@ while(cap.isOpened()):
 
     # Display cumulative waiting times for left and right lanes
     current_time = time.time()
-    left_lane_time = sum(current_time - entry_time for entry_time in waiting_times_left_lane.values())
-    right_lane_time = sum(current_time - entry_time for entry_time in waiting_times_right_lane.values())
+
+    total_left = 0
+    total_right = 0
+    for entry in waiting_times_left_lane.values():
+        if entry ==0:
+            continue
+        total_left+=current_time-entry
+    for entry in waiting_times_right_lane.values():
+        if entry ==0:
+            continue
+        total_right+=current_time-entry
     
-    cv2.putText(frame, f"L: {left_lane_time:.2f}s",
+    cv2.putText(frame, f"L: {total_left:.2f}s",
                 (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
     
-    cv2.putText(frame, f"R: {right_lane_time:.2f}s",
+    cv2.putText(frame, f"R: {total_right:.2f}s",
                 (int(lane_divider_x) + 10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
     # lane divider
     cv2.line(frame, (int(lane_divider_x), 0), (int(lane_divider_x), frame.shape[0]), (255, 255, 255), 2)
 
-    # Display FPS
-    fps = 1.0 / (time.time() - start_time)
-    cv2.putText(frame, f"FPS: {fps:.2f}",
-                (frame.shape[1] // 2 - 40, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-    
     cv2.imshow('Frame', frame)
 
     if cv2.waitKey(25) & 0xFF == ord('q'):
