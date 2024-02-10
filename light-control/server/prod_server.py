@@ -35,6 +35,7 @@ EW_YELLOW = [lightsEW, lightsWE]
 EWL_GREEN = [lightsEWL, lightsWEL]
 EWL_YELLOW = [lightsEWL, lightsWEL]
 
+
 # Raspberry Pi's IP address
 PI_IP = '192.168.29.155'
 PI_PORT = 12345
@@ -47,7 +48,7 @@ CLASS_TO_PHASE = {
 }
 
 loaded_model = load_model('traffic_model.h5')
-old_action = 0  # Initialize with an invalid action
+
 
 def choose_action(state):
     """
@@ -109,6 +110,7 @@ def handle_client(connection, address):
 
 # Function to handle action prediction
 def action_thread():
+    old_action = 0  # Initialize with an invalid action
     try:
         while True:
             # Wait until all clients have sent their data
@@ -169,10 +171,6 @@ def action_thread():
 
                     # Update old action
                     old_action = action
-
-                # Send response back to the server
-                serialised_result=pickle.dumps(action)
-                connection.sendall(serialised_result)
 
                 print(f"Action {action} performed")
 
