@@ -81,8 +81,14 @@ class Simulation:
             # Plot SHAP values
             ax.clear()  # Clear previous plot
             ax.bar(range(len(feature_importance.flatten())), feature_importance.flatten())
+            # Set y-axis limits to 0 and 100
+            ax.set_ylim(-10, 110)
+            # Set x-axis ticks and labels
+            lane_group_names = ['W2EG', 'W2EL', 'N2SG', 'N2SL', 'E2WG', 'E2WL', 'S2NG', 'S2NL']
+            ax.set_xticks(range(len(lane_group_names)))
+            ax.set_xticklabels(lane_group_names, rotation=45)  # Rotate labels for better readability
             ax.set_title('SHAP Values')
-            ax.set_xlabel('Feature Index')
+            ax.set_xlabel('Lane Groups')
             ax.set_ylabel('SHAP Value')
             plt.pause(0.1) 
 
