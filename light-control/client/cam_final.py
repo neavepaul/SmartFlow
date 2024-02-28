@@ -7,8 +7,8 @@ import socket
 import pickle
 
 # Define the lower and upper bounds for coloured stickers
-lower_color = np.array([35, 50, 50])
-upper_color = np.array([85, 255, 255])
+lower_color = np.array([40 , 40, 40])
+upper_color = np.array([80, 255, 255])
 
 tracker = Sort()
 
@@ -37,7 +37,8 @@ def send_data_to_server(index, data):
     """
     try:
         # Server IP address and port
-        SERVER_IP = '192.168.29.155'
+        # SERVER_IP = '192.168.29.155'
+        SERVER_IP = '192.168.43.142'
         SERVER_PORT = 12345
 
         # Create a socket connection to the server
@@ -135,7 +136,7 @@ while(cap.isOpened()):
         total_right += current_time - entry
     
     # Send data to the server
-    send_data_to_server(CLIENT_ID, [total_left, total_right])
+    send_data_to_server(CLIENT_ID, [total_right, total_left])
 
 
     cv2.putText(frame, f"L: {total_left:.2f}s",

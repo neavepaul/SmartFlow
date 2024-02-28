@@ -8,8 +8,8 @@ import socket
 import pickle
 
 # Define the lower and upper bounds for coloured stickers
-lower_color = np.array([35, 50, 50])
-upper_color = np.array([85, 255, 255])
+lower_color = np.array([40 , 40, 40])
+upper_color = np.array([80, 255, 255])
 
 tracker = Sort()
 
@@ -25,7 +25,13 @@ picam2.start()
 
 # Dividing line between the left and right lanes
 lane_divider_x = width // 2
-CLIENT_ID = 1
+
+# 1 = w to e 
+# 2 = n to s
+# 3 = e to w
+# 4 = s to n
+
+CLIENT_ID = 1 
 
 def calculate_time_in_frame(object_id, lane_id):
     if object_id in waiting_times_left_lane and lane_id == "left_lane":
@@ -136,8 +142,8 @@ while True:
             continue
         total_right += current_time - entry
     
-    # Send data to the server
-    send_data_to_server(1, [total_left, total_right])
+    # Send data to the server (id, [group, left lane])
+    send_data_to_server(CLIENT_ID, [total_right, total_left])
 
 
     cv2.putText(frame, f"L: {total_left:.2f}s",
