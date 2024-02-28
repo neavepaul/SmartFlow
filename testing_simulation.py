@@ -43,7 +43,8 @@ class Simulation:
 
         # Create a figure for dynamic plotting
         plt.ion()  # Turn on interactive mode
-        fig, ax = plt.subplots()
+        # fig, ax = plt.subplots()
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
 
         # first, generate the route file for this simulation and set up sumo
@@ -56,6 +57,7 @@ class Simulation:
         self._waiting_times = {}
         old_total_wait = 0
         old_action = -1 # dummy init
+        total_reward_list=[]
 
         while self._step < self._max_steps:
 
@@ -76,21 +78,22 @@ class Simulation:
             feature_importance = shap_values[0]
 
             # Print or use the feature_importance as needed for explanation
-            print("SHAP Values:", feature_importance)
+            # print("SHAP Values:", feature_importance)
 
             # Plot SHAP values
-            ax.clear()  # Clear previous plot
-            ax.bar(range(len(feature_importance.flatten())), feature_importance.flatten())
+            ax1.clear()  # Clear previous plot
+            ax1.bar(range(len(feature_importance.flatten())), feature_importance.flatten())
             # Set y-axis limits to 0 and 100
-            ax.set_ylim(-10, 110)
+            ax1.set_ylim(-10, 110)
             # Set x-axis ticks and labels
             lane_group_names = ['W2EG', 'W2EL', 'N2SG', 'N2SL', 'E2WG', 'E2WL', 'S2NG', 'S2NL']
-            ax.set_xticks(range(len(lane_group_names)))
-            ax.set_xticklabels(lane_group_names, rotation=45)  # Rotate labels for better readability
-            ax.set_title('SHAP Values')
-            ax.set_xlabel('Lane Groups')
-            ax.set_ylabel('SHAP Value')
-            plt.pause(0.1) 
+            ax1.set_xticks(range(len(lane_group_names)))
+            ax1.set_xticklabels(lane_group_names, rotation=45)  # Rotate labels for better readability
+            ax1.set_title('SHAP Values')
+            ax1.set_xlabel('Lane Groups')
+            ax1.set_ylabel('SHAP Value')
+
+
 
             # if the chosen phase is different from the last phase, activate the yellow phase
             if self._step != 0 and old_action != action:
@@ -107,7 +110,18 @@ class Simulation:
 
             self._reward_episode.append(reward)
 
-        #print("Total reward:", np.sum(self._reward_episode))
+            # Plot total reward
+            total_reward = np.sum(self._reward_episode)
+            total_reward_list.append(total_reward)
+            ax2.clear()
+            ax2.plot(total_reward_list, color='blue')
+            ax2.set_title('Total Reward')
+            ax2.set_xlabel('Step')
+            ax2.set_ylabel('Total Reward')
+
+            plt.pause(0.1) 
+            print("Total reward:", np.sum(self._reward_episode))
+
         traci.close()
         simulation_time = round(timeit.default_timer() - start_time, 1)
         plt.ioff()  # Turn off interactive mode when the simulation is done
