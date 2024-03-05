@@ -25,6 +25,15 @@ lightsEWL = TrafficLights(16, 20, 21, pin_factory=factory_EW)  # RYG
 lightsWE = TrafficLights(25, 8, 7, pin_factory=factory_WE)  # RYG
 lightsWEL = TrafficLights(16, 20, 21, pin_factory=factory_WE)  # RYG
 
+lightsNS.red.on()
+lightsNSL.red.on()
+lightsSN.red.on()
+lightsSNL.red.on()
+lightsEW.red.on()
+lightsEWL.red.on()
+lightsWE.red.on()
+lightsWEL.red.on()
+
 NS_GREEN = [lightsNS, lightsSN]
 NS_YELLOW = [lightsNS, lightsSN]
 NSL_GREEN = [lightsNSL, lightsSNL]
