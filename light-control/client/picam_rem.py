@@ -49,7 +49,7 @@ while True:
     detections = []
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)
-        if w * h > 2500:  # minimum object size pixels
+        if w * h > 500:  # minimum object size pixels
             detections.append([x, y, x+w, y+h])
 
     # Update tracker
