@@ -11,10 +11,10 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # kill warning about tensorflow
 
 
-factory_NS = PiGPIOFactory(host='192.168.29.56')
-factory_SN = PiGPIOFactory(host='192.168.29.20')
-factory_EW = PiGPIOFactory(host='192.168.29.109')
-factory_WE = PiGPIOFactory(host='192.168.29.215')
+factory_NS = PiGPIOFactory(host='192.168.0.2')
+factory_SN = PiGPIOFactory(host='192.168.0.3')
+factory_EW = PiGPIOFactory(host='192.168.0.4')
+factory_WE = PiGPIOFactory(host='192.168.0.5')
 
 # Every traffic signal will have this definition
 lightsNS = TrafficLights(25, 8, 7, pin_factory=factory_NS)  # RYG
@@ -37,7 +37,7 @@ EWL_YELLOW = [lightsEWL, lightsWEL]
 
 
 # Raspberry Pi's IP address
-PI_IP = '192.168.29.155'
+PI_IP = '192.168.0.69'
 PI_PORT = 12345
 
 CLASS_TO_PHASE = {
