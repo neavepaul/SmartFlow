@@ -2,10 +2,10 @@ from gpiozero import TrafficLights
 from gpiozero.pins.pigpio import PiGPIOFactory
 from time import sleep
 
-factory_NS = PiGPIOFactory(host='192.168.0.2')
-factory_SN = PiGPIOFactory(host='192.168.0.3')
+factory_WE = PiGPIOFactory(host='192.168.0.2')
+factory_NS = PiGPIOFactory(host='192.168.0.3')
 factory_EW = PiGPIOFactory(host='192.168.0.4')
-factory_WE = PiGPIOFactory(host='192.168.0.5')
+factory_SN = PiGPIOFactory(host='192.168.0.5')
 
 # Every traffic signal will have this definition
 lightsNS = TrafficLights(25, 8, 7, pin_factory=factory_NS)  # RYG
